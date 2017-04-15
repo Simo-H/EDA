@@ -25,8 +25,10 @@ public class ReadWrite {
         }
 
     }
+
     /**Read encrypted or unencrypted text*/
     public String ReadText(String filePath){
+        FilePathLegal(filePath);
         String content = null;
         File file = new File(filePath); //for ex foo.txt
         FileReader reader = null;
@@ -89,8 +91,9 @@ public class ReadWrite {
    /**Read key from text file */
     public Map<Character,Character> ReadKey(String filePath)
     {
+        FilePathLegal(filePath);
 
-            Map<Character ,Character> KeyMap = new HashMap<Character, Character>();
+        Map<Character ,Character> KeyMap = new HashMap<Character, Character>();
             String keyString = ReadText(filePath);
             keyString = keyString.replaceAll("\r\n","");
             keyString = keyString.replaceAll(" ","");
