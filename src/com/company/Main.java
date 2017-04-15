@@ -15,5 +15,9 @@ public class Main {
         Map<Character ,Character> KeyMap=new HashMap<Character, Character>();
         KeyMap=RW.ReadKey("C:\\Users\\Stav\\Desktop\\key.txt");
         RW.WriteKey(KeyMap,"C:\\Users\\Stav\\Desktop\\writekey.txt");
+        CBCmode cbc=new CBCmode(10,"qrstabcdqr");
+        byte[] bb=new byte[10];
+        bb=cbc.StringToUf8("qrstabcdqr");
+        String A=cbc.Uf8ToString(bb);
     }
 }
