@@ -42,7 +42,16 @@ public class CBCmode {
         {
             textDivided[j] = textDivided[j]+Text.charAt(i);
         }
-        
+    }
+    public byte[] xor(byte[] plaintextByte, byte[] IV)
+    {
+        byte[] postXorArray = new byte[BlockSize];
 
+        for (int i = 0; i<BlockSize;i++)
+        {
+            int xor = (int)plaintextByte[i] ^ (int)IV[i];
+            postXorArray[i] = (byte)(0xff & xor);
+        }
+        return postXorArray;
     }
 }
