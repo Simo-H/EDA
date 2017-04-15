@@ -1,6 +1,7 @@
 package com.company;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Handling the entire process of encryption and decoding by cbc mode
@@ -10,11 +11,13 @@ public class CBCmode {
     private int BlockSize;
     private String[] textDivided;
     private String Text;
+    private SubstitutionCipherED SubstitutionC_ED;
 
-    public CBCmode(int blockSize,String text)
+    public CBCmode(int blockSize,String text,HashMap substitutionCipherED)
     {
         Text=text;
         BlockSize=blockSize;
+        SubstitutionC_ED=new SubstitutionCipherED(substitutionCipherED);
         if ((text.length()% blockSize)== 0)
         {
             textDivided= new String[text.length()/ blockSize];
@@ -24,6 +27,7 @@ public class CBCmode {
             textDivided= new String[(text.length()/ blockSize)+1];
         }
         textDivided =new String[BlockSize];
+        Divided();
 
     }
     public void Divided()
