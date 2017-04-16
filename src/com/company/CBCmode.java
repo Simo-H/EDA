@@ -1,5 +1,6 @@
 package com.company;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,9 +65,9 @@ public class CBCmode {
         {
             byte[] b = PlanText.getBytes("UTF-8");
 
-            for ( int i= b.length;i<BlockSize;i++ )
+            if (b.length<BlockSize)
             {
-                b[i]=0;
+               return Arrays.copyOf(b,BlockSize);
             }
             return b;
         }
