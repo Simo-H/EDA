@@ -36,8 +36,9 @@ public class CBCmode {
         int mod=text.length()% BlockSize ;
         int div=text.length()/ BlockSize;
         int j=0;
-        for (int i=0; i<=div;i++)
+        for (int i=0; i<div;i++)
         {
+            textDivided[i] = "";
             for (int f=0; f<BlockSize;f++)
             {
                 textDivided[i] = textDivided[i]+text.charAt(j);
@@ -46,9 +47,10 @@ public class CBCmode {
         }
         if ( mod!=0)
         {
-            for (int i=0; i<=mod;i++)
+            textDivided[div] = "";
+            for (int i=0; i<mod;i++)
             {
-                textDivided[div+1] = textDivided[div+1]+text.charAt(j);
+                textDivided[div] = textDivided[div]+text.charAt(j);
                 j++;
             }
 
