@@ -94,11 +94,11 @@ public class ReadWrite {
 
     }
    /**Read key from text file */
-    public Map<Character,Character> ReadKey(String filePath)
+    public HashMap<Character,Character> ReadKey(String filePath)
     {
         FilePathLegal(filePath);
 
-        Map<Character ,Character> KeyMap = new HashMap<Character, Character>();
+        HashMap<Character ,Character> KeyMap = new HashMap<Character, Character>();
             String keyString = ReadText(filePath);
             keyString = keyString.replaceAll("\r\n","");
             keyString = keyString.replaceAll(" ","");
@@ -113,7 +113,7 @@ public class ReadWrite {
 
     }
     /**Write key to text file */
-    public void WriteKey(Map<Character,Character> KeyMap,String filePath){
+    public void WriteKey(HashMap<Character,Character> KeyMap,String filePath){
         String KeyString= KeyMap.toString();
         KeyString= KeyString.substring(1,KeyString.length()-1);
         String KeyToWrite="";

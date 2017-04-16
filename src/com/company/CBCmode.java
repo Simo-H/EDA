@@ -9,53 +9,48 @@ import java.util.Map;
 public class CBCmode {
 
     private int BlockSize;
-    private String[] textDivided;
-    private String Text;
-    private SubstitutionCipherED SubstitutionC_ED;
-    private String[] cipertext;
+    private SubstitutionCipherED Encryption;
+   // private String[] cipertext;
+
+   // private String[] textDivided;
+   // private String Text;
 
 
-    public CBCmode(int blockSize,String text,HashMap substitutionCipherED)
+    public CBCmode(int blockSize,SubstitutionCipherED encryption)
     {
-
-        Text=text;
         BlockSize=blockSize;
-        SubstitutionC_ED=new SubstitutionCipherED(substitutionCipherED);
-        if ((text.length()% blockSize)== 0)
+        Encryption=encryption;
+    }
+
+    public String[] Divided(String text)
+    {
+        String[] textDivided;
+        if ((text.length()% BlockSize)== 0)
         {
-            textDivided= new String[text.length()/ blockSize];
+            textDivided= new String[text.length()/ BlockSize];
         }
         else
         {
-            textDivided= new String[(text.length()/ blockSize)+1];
+            textDivided= new String[(text.length()/ BlockSize)+1];
         }
-        textDivided =new String[BlockSize];
-        Divided();
-        cipertext=new String[textDivided.length];
-
-    }
-    public void Divided()
-    {
-        int j=0;
-        int mod=Text.length()% BlockSize ;
-        int div=Text.length()/ BlockSize;
+        int mod=text.length()% BlockSize ;
+        int div=text.length()/ BlockSize;
         for (int i=0; i<=div;i++)
         {
-            for (int f=0; f<=BlockSize;i++)
+            for (int f=0; f<=BlockSize;f++)
             {
-                textDivided[j] = textDivided[j]+Text.charAt(f);
-
+                textDivided[i] = textDivided[i]+text.charAt(f);
             }
-            j++;
         }
         if ( mod!=0)
         {
             for (int i=0; i<=mod;i++)
             {
-                textDivided[j] = textDivided[j]+Text.charAt(i);
+                textDivided[div+1] = textDivided[div+1]+text.charAt(i);
             }
 
         }
+        return textDivided;
 
     }
     public byte[] StringToUtf8(String PlanText)
@@ -104,8 +99,12 @@ public class CBCmode {
         return postXorArray;
     }
 
-    public String CBCEncryption(String IVS, Map<Character,Character> Key)
+    public String CBCEncryption(String IVS,String text)
     {
+        String[] cipertext;
+        String[] textDivided;
+        textDivided=Divided(text);
+        cipertext=new String[textDivided.length];
         byte[] IV= StringToUtf8(IVS);
         byte[] plaintextByte= new byte[BlockSize];
         byte[] xor= new byte[BlockSize];
@@ -114,8 +113,8 @@ public class CBCmode {
         {
             plaintextByte= StringToUtf8(textDivided[i]);
             xor=xor( plaintextByte,IV) ;
-            String encrypt=Uf8ToString(xor);
-            cipertext[i]= SubstitutionC_ED.Encrypt(encrypt);
+            String ToBeEncrypted=Uf8ToString(xor);
+            cipertext[i]= Encryption.Encrypt(ToBeEncrypted);
             IV= StringToUtf8(cipertext[i]);
         }
         String complete;
