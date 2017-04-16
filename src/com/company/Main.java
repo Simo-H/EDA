@@ -23,5 +23,7 @@ public class Main {
         CBCmode cbc= new CBCmode(blockSIZE,sc);
         String test = cbc.CBCEncryption(IV,alltext);
         System.out.print(test);
+        String origonal=cbc.CBCDecryption(IV,test);
+        RW.WriteText( "C:\\Users\\Stav\\Desktop\\YA.txt",origonal);
     }
 }
