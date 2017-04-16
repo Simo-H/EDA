@@ -1,7 +1,7 @@
 package com.company;
-
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Handling the entire process of encryption and decoding by cbc mode
@@ -12,9 +12,12 @@ public class CBCmode {
     private String[] textDivided;
     private String Text;
     private SubstitutionCipherED SubstitutionC_ED;
+    private String[] cipertext;
+
 
     public CBCmode(int blockSize,String text,HashMap substitutionCipherED)
     {
+
         Text=text;
         BlockSize=blockSize;
         SubstitutionC_ED=new SubstitutionCipherED(substitutionCipherED);
@@ -28,6 +31,7 @@ public class CBCmode {
         }
         textDivided =new String[BlockSize];
         Divided();
+        cipertext=new String[textDivided.length];
 
     }
     public void Divided()
@@ -54,7 +58,7 @@ public class CBCmode {
         }
 
     }
-    public byte[] StringToUf8(String PlanText)
+    public byte[] StringToUtf8(String PlanText)
     {
         try
         {
@@ -100,8 +104,22 @@ public class CBCmode {
         return postXorArray;
     }
 
-    public void CBCEncryption()
+    public String CBCEncryption(String IVS, Map<Character,Character> Key)
     {
+        byte[] IV= StringToUtf8(IVS);
+        byte[] plaintextByte= new byte[BlockSize];
+        byte[] xor= new byte[BlockSize];
 
+        for (int i=0;i<textDivided.length;i++)
+        {
+            plaintextByte= StringToUtf8(textDivided[i]);
+            xor=xor( plaintextByte,IV) ;
+            String encrypt=Uf8ToString(xor);
+            cipertext[i]= SubstitutionC_ED.Encrypt(encrypt);
+            IV= StringToUtf8(cipertext[i]);
+        }
+        String complete;
+        complete=String.join("", cipertext);
+        return  complete;
     }
 }

@@ -39,7 +39,8 @@ public class ReadWrite {
             content = new String(chars);
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.print("Reading text fail..");
+            //e.printStackTrace();
 
         } finally {
             if(reader !=null) {
@@ -47,7 +48,11 @@ public class ReadWrite {
                 {
                     reader.close();
                 }
-                catch (IOException ex){}
+                catch (IOException ex)
+                {
+                    System.out.print("Writing to text fail..");
+
+                }
             }
         }
 
@@ -65,8 +70,8 @@ public class ReadWrite {
             bw.write(text);
 
         } catch (IOException e) {
-
-            e.printStackTrace();
+            System.out.print("Writing to text fail..");
+            // e.printStackTrace();
 
         } finally {
 
@@ -79,8 +84,8 @@ public class ReadWrite {
                     fw.close();
 
             } catch (IOException ex) {
-
-                ex.printStackTrace();
+                System.out.print("Writing to text fail..");
+                // ex.printStackTrace();
 
             }
 
