@@ -1,6 +1,7 @@
 package com.company;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -14,7 +15,7 @@ public class SubstitutionCipherAttack {
 
     }
 
-    public HashMap<Character,Character>[] findAllPossibleKeys(int KeySize)
+    public ArrayList<HashMap<Character,Character>> findAllPossibleKeys(int KeySize)
     {
 
         String characterToPremute = "";
@@ -41,19 +42,42 @@ public class SubstitutionCipherAttack {
                 return null;
             }
         }
-        perm1(characterToPremute);
-        return null;
+        ArrayList<String> AllPermutaionStrings = new ArrayList<>();
+        perm1(characterToPremute,AllPermutaionStrings);
+        return AllPossibleKeys(AllPermutaionStrings,characterToPremute);
     }
 
-    public  static void perm1(String s) { perm1("", s); }
-    private static void perm1(String prefix, String s) {
+    public   void perm1(String s, ArrayList<String> a) { perm1("", s,a); }
+    private  void perm1(String prefix, String s,ArrayList<String> outPut) {
         int n = s.length();
-        if (n == 0) System.out.println(prefix);
+        if (n == 0) {
+            outPut.add(prefix);
+        }
         else {
             for (int i = 0; i < n; i++)
-                perm1(prefix + s.charAt(i), s.substring(0, i) + s.substring(i+1, n));
+                perm1(prefix + s.charAt(i), s.substring(0, i) + s.substring(i+1, n),outPut);
         }
 
     }
 
+    private HashMap<Character,Character> StringToHashMap(String singlePermutaion,String CharactersHashKeys)
+    {
+        HashMap<Character,Character> cipherKey = new HashMap<>();
+        char[] KeysCharacters = CharactersHashKeys.toCharArray();
+        char[] ValueCharacters = singlePermutaion.toCharArray();
+        for (int i = 0;i<KeysCharacters.length;i++)
+        {
+            cipherKey.put(KeysCharacters[i],ValueCharacters[i]);
+        }
+        return  cipherKey;
+    }
+    private ArrayList<HashMap<Character,Character>> AllPossibleKeys(ArrayList<String> AllPermutaionStrings,String CharactersHashKeys)
+    {
+        ArrayList<HashMap<Character,Character>> AllPossibleKeys = new ArrayList<HashMap<Character,Character>>();
+        for(String x:AllPermutaionStrings)
+        {
+            AllPossibleKeys.add(StringToHashMap(x,CharactersHashKeys));
+        }
+        return AllPossibleKeys;
+    }
 }

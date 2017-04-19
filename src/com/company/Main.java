@@ -1,7 +1,7 @@
 package com.company;
-import java.util.Map;
+import java.util.*;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Main {
 
@@ -19,6 +19,15 @@ public class Main {
         String IV = RW.ReadText(pathForIV);
 
         SubstitutionCipherAttack sa = new SubstitutionCipherAttack();
-        sa.findAllPossibleKeys(8);
+        ArrayList<HashMap<Character,Character>> a = sa.findAllPossibleKeys(8);
+        ConcurrentHashMap<String,String> b = new ConcurrentHashMap<String,String>();
+        Set r = ConcurrentHashMap.newKeySet();
+        String test = RW.ReadText("C:\\Users\\Simo\\Desktop\\words.txt");
+        String[] test2 = test.split("\n");
+        for(String x:test2)
+        {
+
+        }
+
     }
 }
