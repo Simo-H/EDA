@@ -127,4 +127,36 @@ public class CBCmode {
         complete=String.join("", cipertext);
         return  complete;
     }
+    public String CBCDecryption(String IVS,String cipherText)
+    {
+        String[] cipherDivided;
+        cipherDivided=Divided(cipherText);
+        String[] DecryptCipherText=new String[cipherDivided.length];
+        byte[] IV= new byte[BlockSize];
+        byte[] xor= new byte[BlockSize];
+        String[] plaintext=new String[cipherDivided.length];
+
+        for (int i=0;i<cipherDivided.length;i++)
+        {
+            DecryptCipherText[i]= Encryption.Decrypt(cipherDivided[i]);
+            IV= StringToUtf8(IVS);
+            byte[] cipherByte= StringToUtf8(DecryptCipherText[i]);
+            xor=xor( cipherByte,IV) ;
+            plaintext[i]=Uf8ToString(xor);
+            IVS=cipherDivided[i];
+
+        }
+        String lastPlaintext="";
+        for (int i=0;i<BlockSize;i++)
+        {
+            if((int)(plaintext[cipherDivided.length-1].charAt(i))!=0)
+            {
+                lastPlaintext=lastPlaintext+plaintext[cipherDivided.length-1].charAt(i);
+            }
+        }
+        plaintext[cipherDivided.length-1]=lastPlaintext;
+        String complete;
+        complete=String.join("", plaintext);
+        return  complete;
+    }
 }
