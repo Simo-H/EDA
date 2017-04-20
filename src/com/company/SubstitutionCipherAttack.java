@@ -17,7 +17,7 @@ public class SubstitutionCipherAttack {
     public SubstitutionCipherAttack(CBCmode CBC) {
         EnglishWordsSet = ConcurrentHashMap.newKeySet();
         ReadWrite RW = new ReadWrite();
-        String test = RW.ReadText("C:\\Users\\Stav\\Desktop\\words.txt");
+        String test = RW.ReadText("C:\\Users\\Simo\\Desktop\\words.txt");
         String[] test2 = test.split("\n");
         for(String x:test2)
         {
@@ -117,11 +117,13 @@ public class SubstitutionCipherAttack {
     }
     public boolean CheckKeyReturnsEnglish(String decryptedText,double minimumNumberOfNonEnglishWords)
     {
-        String[] decryptedTextSaperatedBySpace = decryptedText.split(" ");
+        decryptedText = decryptedText.toLowerCase();
+        String[] decryptedTextSaperatedBySpace = decryptedText.split("[\\-. \r\n\"]");
         ArrayList<String> DecryptedWordsArray = new ArrayList<String>(Arrays.asList(decryptedTextSaperatedBySpace));
+        DecryptedWordsArray.removeAll(Arrays.asList(""));
         DecryptedWordsArray.removeAll(EnglishWordsSet);
         if ((double)DecryptedWordsArray.size()/decryptedTextSaperatedBySpace.length < minimumNumberOfNonEnglishWords)
-            return false;
-        return true;
+            return true;
+        return false;
     }
 }
