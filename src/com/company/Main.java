@@ -18,16 +18,12 @@ public class Main {
         String pathForIV = "C:\\Users\\Simo\\Desktop\\IV_example.txt";
         String IV = RW.ReadText(pathForIV);
 
+        RW.WriteText("C:\\Users\\Simo\\Desktop\\test.txt","111");
         SubstitutionCipherAttack sa = new SubstitutionCipherAttack();
         ArrayList<HashMap<Character,Character>> a = sa.findAllPossibleKeys(8);
         ConcurrentHashMap<String,String> b = new ConcurrentHashMap<String,String>();
-        Set r = ConcurrentHashMap.newKeySet();
-        String test = RW.ReadText("C:\\Users\\Simo\\Desktop\\words.txt");
-        String[] test2 = test.split("\n");
-        for(String x:test2)
-        {
 
-        }
+
 
     }
 }
