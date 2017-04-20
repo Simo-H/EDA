@@ -14,13 +14,14 @@ public class Main {
 
         HashMap<Character ,Character> KeyMap=new HashMap<Character, Character>();
 
-        KeyMap=RW.ReadKey("C:\\Users\\Stav\\Desktop\\key_example.txt");
+       KeyMap=RW.ReadKey("C:\\Users\\Stav\\Desktop\\key_example.txt");
 
         String pathForIV = "C:\\Users\\Stav\\Desktop\\IV_example.txt";
         String IV = RW.ReadText(pathForIV);
         SubstitutionCipherED Encryption =new SubstitutionCipherED(KeyMap);
         CBCmode CBC= new CBCmode(10);
-      // RW.WriteText("C:\\Users\\Stav\\Desktop\\test.txt",CBC.CBCDecryption(IV,alltext,));
+        String S= CBC.CBCDecryption(IV,alltext,Encryption);
+      RW.WriteText("C:\\Users\\Stav\\Desktop\\test.txt",S);
 
        // ArrayList<HashMap<Character,Character>> a = sa.findAllPossibleKeys(8);
         //ConcurrentHashMap<String,String> b = new ConcurrentHashMap<String,String>();
@@ -28,6 +29,6 @@ public class Main {
        // String test = RW.ReadText("C:\\Users\\Simo\\Desktop\\words.txt");
 
         SubstitutionCipherAttack sbattack=new SubstitutionCipherAttack(CBC);
-        KeyMap=sbattack.CipherTextOnlyAttack(alltext,IV,1, 10,0.1);
+        KeyMap=sbattack.CipherTextOnlyAttack(alltext,IV,1, 8,0.4);
     }
 }

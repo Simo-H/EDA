@@ -100,6 +100,7 @@ public class SubstitutionCipherAttack {
 
     public   HashMap<Character,Character> CipherTextOnlyAttack(String textCipher,String IV,double PercentCheck,int KeySize,double minimumNumberOfNonEnglishWords)
     {
+
         ArrayList<HashMap<Character,Character>> findAllPossibleKeys=findAllPossibleKeys(KeySize);
         String SubCipher= SectionOfCiphertext (textCipher, PercentCheck);
 
@@ -121,7 +122,7 @@ public class SubstitutionCipherAttack {
         ArrayList<String> DecryptedWordsArray = new ArrayList<String>(Arrays.asList(decryptedTextSaperatedBySpace));
         DecryptedWordsArray.removeAll(EnglishWordsSet);
         if ((double)DecryptedWordsArray.size()/decryptedTextSaperatedBySpace.length < minimumNumberOfNonEnglishWords)
-            return false;
-        return true;
+            return true;
+        return false;
     }
 }
