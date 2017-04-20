@@ -19,14 +19,15 @@ public class Main {
         String pathForIV = "C:\\Users\\Stav\\Desktop\\IV_example.txt";
         String IV = RW.ReadText(pathForIV);
         SubstitutionCipherED Encryption =new SubstitutionCipherED(KeyMap);
-       CBCmode CBC= new CBCmode(10, Encryption);
-       RW.WriteText("C:\\Users\\Stav\\Desktop\\test.txt",CBC.CBCDecryption(IV,alltext));
+        CBCmode CBC= new CBCmode(10);
+      // RW.WriteText("C:\\Users\\Stav\\Desktop\\test.txt",CBC.CBCDecryption(IV,alltext,));
 
        // ArrayList<HashMap<Character,Character>> a = sa.findAllPossibleKeys(8);
         //ConcurrentHashMap<String,String> b = new ConcurrentHashMap<String,String>();
         //Set r = ConcurrentHashMap.newKeySet();
        // String test = RW.ReadText("C:\\Users\\Simo\\Desktop\\words.txt");
 
-
+        SubstitutionCipherAttack sbattack=new SubstitutionCipherAttack(CBC);
+        KeyMap=sbattack.CipherTextOnlyAttack(alltext,IV,1, 10,0.1);
     }
 }
