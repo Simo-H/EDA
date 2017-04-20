@@ -118,7 +118,7 @@ public class SubstitutionCipherAttack {
     public boolean CheckKeyReturnsEnglish(String decryptedText,double minimumNumberOfNonEnglishWords)
     {
         decryptedText = decryptedText.toLowerCase();
-        String[] decryptedTextSaperatedBySpace = decryptedText.split("[\\-. \r\n\"]");
+        String[] decryptedTextSaperatedBySpace = decryptedText.split("[\\]\\[0123546789,'+=_\\;:{}/<>|)(?!@#$%^&*\\-. \r\n\"]");
         ArrayList<String> DecryptedWordsArray = new ArrayList<String>(Arrays.asList(decryptedTextSaperatedBySpace));
         DecryptedWordsArray.removeAll(Arrays.asList(""));
         DecryptedWordsArray.removeAll(EnglishWordsSet);
