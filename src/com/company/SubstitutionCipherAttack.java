@@ -2,18 +2,29 @@ package com.company;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Simo on 16/04/2017.
  */
 public class SubstitutionCipherAttack {
 
+    Set EnglishWordsSet;
     CBCmode cbc;
-
-    public SubstitutionCipherAttack(CBCmode CBC)
-    {
+    public SubstitutionCipherAttack(CBCmode CBC) {
+        EnglishWordsSet = ConcurrentHashMap.newKeySet();
+        ReadWrite RW = new ReadWrite();
+        String test = RW.ReadText("C:\\Users\\Stav\\Desktop\\words.txt");
+        String[] test2 = test.split("\n");
+        for(String x:test2)
+        {
+            EnglishWordsSet.add(x);
+        }
         cbc=CBC;
+
     }
 
     public ArrayList<HashMap<Character,Character>> findAllPossibleKeys(int KeySize)
@@ -87,18 +98,30 @@ public class SubstitutionCipherAttack {
         return  textCipher.substring(0,lengthtext);
     }
 
-    private  HashMap<Character,Character> CipherTextOnlyAttack(String textCipher,String IV,double PercentCheck,int KeySize,double minimum)
+    public   HashMap<Character,Character> CipherTextOnlyAttack(String textCipher,String IV,double PercentCheck,int KeySize,double minimumNumberOfNonEnglishWords)
     {
-        ArrayList<HashMap<Character,Character>> findAllPossibleKeys= new ArrayList<HashMap<Character,Character>>();
-        findAllPossibleKeys=findAllPossibleKeys(KeySize);
+        ArrayList<HashMap<Character,Character>> findAllPossibleKeys=findAllPossibleKeys(KeySize);
         String SubCipher= SectionOfCiphertext (textCipher, PercentCheck);
 
         //paralell
         for (int i=0; i<findAllPossibleKeys.size();i++)
         {
-            cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(findAllPossibleKeys.get(i)));
-            
+            String decryptedText= cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(findAllPossibleKeys.get(i)));
+            if (CheckKeyReturnsEnglish(decryptedText,minimumNumberOfNonEnglishWords))
+            {
+                return findAllPossibleKeys.get(i);
+            }
         }
+        return null;
 
+    }
+    public boolean CheckKeyReturnsEnglish(String decryptedText,double minimumNumberOfNonEnglishWords)
+    {
+        String[] decryptedTextSaperatedBySpace = decryptedText.split(" ");
+        ArrayList<String> DecryptedWordsArray = new ArrayList<String>(Arrays.asList(decryptedTextSaperatedBySpace));
+        DecryptedWordsArray.removeAll(EnglishWordsSet);
+        if ((double)DecryptedWordsArray.size()/decryptedTextSaperatedBySpace.length < minimumNumberOfNonEnglishWords)
+            return false;
+        return true;
     }
 }
