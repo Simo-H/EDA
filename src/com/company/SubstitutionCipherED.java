@@ -12,6 +12,7 @@ public class SubstitutionCipherED {
     public SubstitutionCipherED(HashMap<Character, Character> key) {
         this.key = key;
     }
+
     public String Encrypt(String plainText)
     {
         char[] cipherText = plainText.toCharArray();

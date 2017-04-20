@@ -10,17 +10,13 @@ import java.util.Map;
 public class CBCmode {
 
     private int BlockSize;
-    private SubstitutionCipherED Encryption;
-   // private String[] cipertext;
-
-   // private String[] textDivided;
-   // private String Text;
+   // private SubstitutionCipherED Encryption;
 
 
-    public CBCmode(int blockSize,SubstitutionCipherED encryption)
+
+    public CBCmode(int blockSize)
     {
         BlockSize=blockSize;
-        Encryption=encryption;
     }
 
     public String[] Divided(String text)
@@ -105,7 +101,7 @@ public class CBCmode {
         return postXorArray;
     }
 
-    public String CBCEncryption(String IVS,String text)
+    public String CBCEncryption(String IVS,String text,SubstitutionCipherED Encryption)
     {
         String[] cipertext;
         String[] textDivided;
@@ -127,7 +123,7 @@ public class CBCmode {
         complete=String.join("", cipertext);
         return  complete;
     }
-    public String CBCDecryption(String IVS,String cipherText)
+    public String CBCDecryption(String IVS,String cipherText,SubstitutionCipherED Encryption)
     {
         String[] cipherDivided;
         cipherDivided=Divided(cipherText);
@@ -159,4 +155,5 @@ public class CBCmode {
         complete=String.join("", plaintext);
         return  complete;
     }
+
 }

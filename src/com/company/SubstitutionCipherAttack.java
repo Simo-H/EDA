@@ -9,10 +9,11 @@ import java.util.HashMap;
  */
 public class SubstitutionCipherAttack {
 
+    CBCmode cbc;
 
-
-    public SubstitutionCipherAttack() {
-
+    public SubstitutionCipherAttack(CBCmode CBC)
+    {
+        cbc=CBC;
     }
 
     public ArrayList<HashMap<Character,Character>> findAllPossibleKeys(int KeySize)
@@ -79,5 +80,25 @@ public class SubstitutionCipherAttack {
             AllPossibleKeys.add(StringToHashMap(x,CharactersHashKeys));
         }
         return AllPossibleKeys;
+    }
+    private String SectionOfCiphertext (String textCipher, double Percent )
+    {
+        int lengthtext= (int)(textCipher.length()*Percent) ;
+        return  textCipher.substring(0,lengthtext);
+    }
+
+    private  HashMap<Character,Character> CipherTextOnlyAttack(String textCipher,String IV,double PercentCheck,int KeySize,double minimum)
+    {
+        ArrayList<HashMap<Character,Character>> findAllPossibleKeys= new ArrayList<HashMap<Character,Character>>();
+        findAllPossibleKeys=findAllPossibleKeys(KeySize);
+        String SubCipher= SectionOfCiphertext (textCipher, PercentCheck);
+
+        //paralell
+        for (int i=0; i<findAllPossibleKeys.size();i++)
+        {
+            cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(findAllPossibleKeys.get(i)));
+            
+        }
+
     }
 }
