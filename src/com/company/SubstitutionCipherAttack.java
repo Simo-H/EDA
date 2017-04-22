@@ -111,7 +111,6 @@ public class SubstitutionCipherAttack {
             }
         }
         return null;
-
     }
     public boolean CheckKeyReturnsEnglish(String decryptedText,double minimumNumberOfNonEnglishWords)
     {
