@@ -1,5 +1,7 @@
 package com.company;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,76 +21,59 @@ public class CBCmode {
         BlockSize=blockSize;
     }
 
-    public String[] Divided(String text)
+    public  byte[][] Divided(byte[] text)
     {
-        String[] textDivided;
-        if ((text.length()% BlockSize)== 0)
+        byte[][] textDivided;
+        if ((text.length % BlockSize)== 0)
         {
-            textDivided= new String[text.length()/ BlockSize];
+            textDivided= new byte[text.length/ BlockSize][BlockSize];
         }
         else
         {
-            textDivided= new String[(text.length()/ BlockSize)+1];
+            textDivided= new byte[(text.length/ BlockSize)+1][BlockSize];
         }
-        int mod=text.length()% BlockSize ;
-        int div=text.length()/ BlockSize;
+        int mod=text.length% BlockSize ;
+        int div=text.length/ BlockSize;
         int j=0;
         for (int i=0; i<div;i++)
         {
-            textDivided[i] = "";
             for (int f=0; f<BlockSize;f++)
             {
-                textDivided[i] = textDivided[i]+text.charAt(j);
+                // textDivided[i] = textDivided[i]+text.charAt(j);
+                textDivided[i][f]=text[j];
                 j++;
             }
         }
         if ( mod!=0)
         {
-            textDivided[div] = "";
             for (int i=0; i<mod;i++)
             {
-                textDivided[div] = textDivided[div]+text.charAt(j);
+                textDivided[div][i]=text[j];
                 j++;
             }
-
+            for (int i = mod;i<BlockSize;i++)
+            {
+                textDivided[div][i]= 0;
+            }
         }
         return textDivided;
-
     }
     public byte[] StringToUtf8(String PlanText)
     {
-        try
-        {
-            byte[] b = PlanText.getBytes("UTF-8");
+            byte[] b = PlanText.getBytes(StandardCharsets.UTF_8);
 
             if (b.length<BlockSize)
             {
                return Arrays.copyOf(b,BlockSize);
             }
             return b;
-        }
-        catch (IOException ex)
-        {
-            System.out.print("utf8 Translation did not succeed");
-            return null;
-        }
-
     }
+
     public String Uf8ToString(byte[] bytePlanText)
     {
-        try
-        {
-            String Plantext= new String(bytePlanText,"UTF-8");
-
-            return Plantext;
-        }
-        catch (IOException ex)
-        {
-            System.out.print("String translation did not succeed");
-            return null;
-        }
-
+             return new String(bytePlanText, StandardCharsets.UTF_8);
     }
+
     public byte[] xor(byte[] plaintextByte, byte[] IV)
     {
         byte[] postXorArray = new byte[BlockSize];
@@ -101,46 +86,32 @@ public class CBCmode {
         return postXorArray;
     }
 
-    public String CBCEncryption(String IVS,String text,SubstitutionCipherED Encryption)
+    public byte[][] CBCEncryption(byte[] IV,byte[] plainText,SubstitutionCipherED Encryption)
     {
-        String[] cipertext;
-        String[] textDivided;
-        textDivided=Divided(text);
-        cipertext=new String[textDivided.length];
-        byte[] IV= StringToUtf8(IVS);
-        byte[] plaintextByte= new byte[BlockSize];
+        byte[][] textDivided;
+        textDivided = Divided(plainText);
+        byte[][] cipherTextByte= new byte[textDivided.length][BlockSize];
         byte[] xor= new byte[BlockSize];
-
         for (int i=0;i<textDivided.length;i++)
         {
-            plaintextByte= StringToUtf8(textDivided[i]);
-            xor=xor( plaintextByte,IV) ;
-            String ToBeEncrypted=Uf8ToString(xor);
-            cipertext[i]= Encryption.Encrypt(ToBeEncrypted);
-            IV= StringToUtf8(cipertext[i]);
+            xor=xor(textDivided[i],IV);
+            cipherTextByte[i] = Encryption.Encrypt(xor);
+            IV = cipherTextByte[i];
         }
-        String complete;
-        complete=String.join("", cipertext);
-        return  complete;
+        return cipherTextByte;
     }
-    public String CBCDecryption(String IVS,String cipherText,SubstitutionCipherED Encryption)
-    {
-        String[] cipherDivided;
-        cipherDivided=Divided(cipherText);
-        String[] DecryptCipherText=new String[cipherDivided.length];
-        byte[] IV= new byte[BlockSize];
-        byte[] xor= new byte[BlockSize];
-        String[] plaintext=new String[cipherDivided.length];
 
+    public String CBCDecryption(byte[] IV,byte[] cipherText,SubstitutionCipherED Encryption)
+    {
+        byte[][] cipherDivided=Divided(cipherText);
+        byte[] xor;
+        String[] plaintext=new String[cipherDivided.length];
         for (int i=0;i<cipherDivided.length;i++)
         {
-            DecryptCipherText[i]= Encryption.Decrypt(cipherDivided[i]);
-            IV= StringToUtf8(IVS);
-            byte[] cipherByte= StringToUtf8(DecryptCipherText[i]);
-            xor=xor( cipherByte,IV) ;
+            byte[] DecryptedCipher = Encryption.Decrypt(cipherDivided[i]);
+            xor = xor(DecryptedCipher,IV);
             plaintext[i]=Uf8ToString(xor);
-            IVS=cipherDivided[i];
-
+            IV=cipherDivided[i];
         }
         String lastPlaintext="";
         for (int i=0;i<BlockSize;i++)
@@ -151,9 +122,6 @@ public class CBCmode {
             }
         }
         plaintext[cipherDivided.length-1]=lastPlaintext;
-        String complete;
-        complete=String.join("", plaintext);
-        return  complete;
+        return String.join("", plaintext);
     }
-
 }

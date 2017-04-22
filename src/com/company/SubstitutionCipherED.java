@@ -13,32 +13,45 @@ public class SubstitutionCipherED {
         this.key = key;
     }
 
-    public String Encrypt(String plainText)
+    public byte[] Encrypt(byte[] xoredText)
     {
-        char[] cipherText = plainText.toCharArray();
+        HashMap<Byte, Byte> ByteKey  = new HashMap<Byte, Byte>();
+        for(HashMap.Entry<Character, Character> entry : key.entrySet()){
+            ByteKey.put((byte)(entry.getKey().charValue()),(byte)entry.getValue().charValue());
+        }
+        byte[] EncryptionBytes = new byte[xoredText.length];
+        for (int i = 0;i<xoredText.length;i++)
+        {
+            if (ByteKey.containsKey(xoredText[i]))
+            {
+                EncryptionBytes[i] = ByteKey.get(xoredText[i]);
+            }
+            else
+            {
+                EncryptionBytes[i] =xoredText[i];
+            }
+        }
+        return EncryptionBytes;
+    }
+
+    public byte[] Decrypt(byte[] cipherText)
+    {
+        HashMap<Byte, Byte> reverseByteKey  = new HashMap<Byte, Byte>();
+        for(HashMap.Entry<Character, Character> entry : key.entrySet()){
+            reverseByteKey.put((byte)entry.getValue().charValue(),(byte)(entry.getKey().charValue()));
+        }
+        byte[] DecryptionBytes = new byte[cipherText.length];
         for (int i = 0;i<cipherText.length;i++)
         {
-            if (key.containsKey(cipherText[i]))
+            if (reverseByteKey.containsKey(cipherText[i]))
             {
-                cipherText[i] = key.get(cipherText[i]);
+                DecryptionBytes[i] = reverseByteKey.get(cipherText[i]);
+            }
+            else
+            {
+                DecryptionBytes[i] =cipherText[i];
             }
         }
-        return new String(cipherText);
-    }
-    public String Decrypt(String cipherText)
-    {
-        HashMap<Character, Character> reverseKey = new HashMap<Character, Character>();
-        for(HashMap.Entry<Character, Character> entry : key.entrySet()){
-            reverseKey.put(entry.getValue(), entry.getKey());
-        }
-        char[] plainText = cipherText.toCharArray();
-        for (int i = 0;i<plainText.length;i++)
-        {
-            if (reverseKey.containsKey(plainText[i]))
-            {
-                plainText[i] = reverseKey.get(plainText[i]);
-            }
-        }
-        return new String(plainText);
+        return DecryptionBytes;
     }
 }

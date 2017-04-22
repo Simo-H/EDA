@@ -1,9 +1,10 @@
 package com.company;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;import java.util.HashMap;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,7 @@ public class ReadWrite {
             reader.read(chars);
             content = new String(chars);
             reader.close();
+
         } catch (IOException e) {
             System.out.print("Reading text fail..");
             //e.printStackTrace();
@@ -55,11 +57,21 @@ public class ReadWrite {
                 }
             }
         }
-
         return content;
-
     }
     /**Write encrypted or unencrypted text*/
+    public void WriteEncryptedText(String filePathDestination,byte[][] text)
+    {
+        try{
+            Path path = Paths.get(filePathDestination);
+            for (int i = 0; i<text.length;i++)
+                Files.write(path, text[i], StandardOpenOption.APPEND);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
     public void WriteText(String filePathDestination, String text){
         BufferedWriter bw = null;
         FileWriter fw = null;
@@ -86,12 +98,21 @@ public class ReadWrite {
             } catch (IOException ex) {
                 System.out.print("Writing to text fail..");
                 // ex.printStackTrace();
-
             }
-
         }
-
-
+    }
+    public byte[] ReadTextbyte(String filePath)
+    {
+        Path path = Paths.get(filePath);
+        try
+        {
+            byte[] data = Files.readAllBytes(path);
+            return  data;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return  null;
     }
    /**Read key from text file */
     public HashMap<Character,Character> ReadKey(String filePath)
