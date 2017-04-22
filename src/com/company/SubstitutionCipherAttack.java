@@ -24,12 +24,10 @@ public class SubstitutionCipherAttack {
             EnglishWordsSet.add(x);
         }
         cbc=CBC;
-
     }
 
     public ArrayList<HashMap<Character,Character>> findAllPossibleKeys(int KeySize)
     {
-
         String characterToPremute = "";
         int keyCounter = 0;
         for (int i = 97;i<123 && keyCounter < KeySize;i++,keyCounter++) {

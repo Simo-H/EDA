@@ -113,15 +113,6 @@ public class CBCmode {
             plaintext[i]=Uf8ToString(xor);
             IV=cipherDivided[i];
         }
-        String lastPlaintext="";
-        for (int i=0;i<BlockSize;i++)
-        {
-            if((int)(plaintext[cipherDivided.length-1].charAt(i))!=0)
-            {
-                lastPlaintext=lastPlaintext+plaintext[cipherDivided.length-1].charAt(i);
-            }
-        }
-        plaintext[cipherDivided.length-1]=lastPlaintext;
         return String.join("", plaintext);
     }
 }
