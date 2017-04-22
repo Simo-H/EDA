@@ -64,7 +64,8 @@ public class ReadWrite {
     {
         try{
             Path path = Paths.get(filePathDestination);
-            for (int i = 0; i<text.length;i++)
+            Files.write(path, text[0]);
+            for (int i = 1; i<text.length;i++)
                 Files.write(path, text[i], StandardOpenOption.APPEND);
         }
         catch (Exception e)
