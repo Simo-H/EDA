@@ -106,13 +106,25 @@ public class CBCmode {
         byte[][] cipherDivided=Divided(cipherText);
         byte[] xor;
         String[] plaintext=new String[cipherDivided.length];
-        for (int i=0;i<cipherDivided.length;i++)
+        for (int i=0;i<cipherDivided.length-1;i++)
         {
             byte[] DecryptedCipher = Encryption.Decrypt(cipherDivided[i]);
             xor = xor(DecryptedCipher,IV);
             plaintext[i]=Uf8ToString(xor);
             IV=cipherDivided[i];
         }
+        byte[] DecryptedCipher = Encryption.Decrypt(cipherDivided[cipherDivided.length-1]);
+        xor = xor(DecryptedCipher,IV);
+        int countZero=0;
+        for ( int i=BlockSize-1;i>0 && xor[i]==0 ;i--  )
+        {
+            countZero++;
+        }
+        byte[] dest=new byte[xor.length-countZero];
+        System.arraycopy( xor, 0, dest, 0, xor.length-countZero);
+
+        plaintext[cipherDivided.length-1]=Uf8ToString(dest);
+
         return String.join("", plaintext);
     }
 }

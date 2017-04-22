@@ -62,9 +62,15 @@ public class ReadWrite {
     /**Write encrypted or unencrypted text*/
     public void WriteEncryptedText(String filePathDestination,byte[][] text)
     {
+        File temp = new File(filePathDestination);
+        if (temp.exists())
+        {
+            temp.delete();
+        }
         try{
             Path path = Paths.get(filePathDestination);
             Files.write(path, text[0]);
+
             for (int i = 1; i<text.length;i++)
                 Files.write(path, text[i], StandardOpenOption.APPEND);
         }
@@ -74,6 +80,11 @@ public class ReadWrite {
         }
     }
     public void WriteText(String filePathDestination, String text){
+        File temp = new File(filePathDestination);
+        if (temp.exists())
+        {
+            temp.delete();
+        }
         BufferedWriter bw = null;
         FileWriter fw = null;
         try {
