@@ -124,22 +124,19 @@ public class SubstitutionCipherAttack {
         return false;
     }
 
-    public HashMap<Character,Character> GetKeyFromPlainAndCipher(String cipher, String plainText,String IV)
+    public HashMap<Character,Character> GetKeyFromPlainAndCipher(byte[] cipher, byte[] plainText,byte[] IV)
     {
-        byte[] IVByte= cbc.StringToUtf8(IV);
-        byte[] plaintextByte = cbc.StringToUtf8(plainText);
-        byte[] xor= cbc.xor( plaintextByte,IVByte) ;
-        String ToBeEncrypted=cbc.Uf8ToString(xor);
+        byte[] xor= cbc.xor( plainText,IV) ;
         HashMap<Character,Character> partialKey = new HashMap<Character,Character>();
-        for (int i=0;i<ToBeEncrypted.length();i++)
+        for (int i=0;i<plainText.length;i++)
         {
-            byte a = xor[i];
-            //byte[] byteChar = {(byte) (0xff & i)};
-            String b = cbc.Uf8ToString(new byte[]{a});
-            //if ((xor[i]<(0xff & 123) && xor[i]>(0xff & 97)) || (xor[i]<(0xff & 91) && xor[i]>(0xff & 65)))
-            if ((Character.getType(ToBeEncrypted.charAt(i)) == Character.UPPERCASE_LETTER ||Character.getType(ToBeEncrypted.charAt(i)) == Character.LOWERCASE_LETTER) && ToBeEncrypted.charAt(i) != 'Ҥ')
+            byte[] a = new byte[]{xor[i]};
+            byte[] b = new byte[]{cipher[i]};
+
+            if ((xor[i]<(0xff & 123) && xor[i]>(0xff & 96)) || (xor[i]<(0xff & 91) && xor[i]>(0xff & 64)))
+//            if ((Character.getType(ToBeEncrypted.charAt(i)) == Character.UPPERCASE_LETTER ||Character.getType(ToBeEncrypted.charAt(i)) == Character.LOWERCASE_LETTER) && ToBeEncrypted.charAt(i) != 'Ҥ')
             {
-                partialKey.put(ToBeEncrypted.charAt(i),cipher.charAt(i));
+                partialKey.put(cbc.Uf8ToString(a).charAt(0),cbc.Uf8ToString(b).charAt(0));
             }
             /*if (Character.isLetter(ToBeEncrypted.charAt(i)))
             {
