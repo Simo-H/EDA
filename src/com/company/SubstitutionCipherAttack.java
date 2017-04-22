@@ -17,19 +17,17 @@ public class SubstitutionCipherAttack {
     public SubstitutionCipherAttack(CBCmode CBC) {
         EnglishWordsSet = ConcurrentHashMap.newKeySet();
         ReadWrite RW = new ReadWrite();
-        String test = RW.ReadText("C:\\Users\\Stav\\Desktop\\words.txt");
+        String test = RW.ReadText("C:\\Users\\Simo\\Desktop\\words.txt");
         String[] test2 = test.split("\n");
         for(String x:test2)
         {
             EnglishWordsSet.add(x);
         }
         cbc=CBC;
-
     }
 
     public ArrayList<HashMap<Character,Character>> findAllPossibleKeys(int KeySize)
     {
-
         String characterToPremute = "";
         int keyCounter = 0;
         for (int i = 97;i<123 && keyCounter < KeySize;i++,keyCounter++) {
@@ -92,17 +90,16 @@ public class SubstitutionCipherAttack {
         }
         return AllPossibleKeys;
     }
-    private String SectionOfCiphertext (String textCipher, double Percent )
+    private byte[] SectionOfCiphertext (byte[] textCipher, double Percent )
     {
-        int lengthtext= (int)(textCipher.length()*Percent) ;
-        return  textCipher.substring(0,lengthtext);
+        int lengthtext= (int)(textCipher.length*Percent) ;
+        return  Arrays.copyOfRange(textCipher,0,lengthtext);
     }
 
-    public   HashMap<Character,Character> CipherTextOnlyAttack(String textCipher,String IV,double PercentCheck,int KeySize,double minimumNumberOfNonEnglishWords)
+    public   HashMap<Character,Character> CipherTextOnlyAttack(byte[] textCipher,byte[] IV,double PercentCheck,int KeySize,double minimumNumberOfNonEnglishWords)
     {
-
         ArrayList<HashMap<Character,Character>> findAllPossibleKeys=findAllPossibleKeys(KeySize);
-        String SubCipher= SectionOfCiphertext (textCipher, PercentCheck);
+        byte[] SubCipher= SectionOfCiphertext (textCipher, PercentCheck);
 
         //paralell
         for (int i=0; i<findAllPossibleKeys.size();i++)
@@ -118,11 +115,38 @@ public class SubstitutionCipherAttack {
     }
     public boolean CheckKeyReturnsEnglish(String decryptedText,double minimumNumberOfNonEnglishWords)
     {
-        String[] decryptedTextSaperatedBySpace = decryptedText.split(" ");
+        decryptedText = decryptedText.toLowerCase();
+        String[] decryptedTextSaperatedBySpace = decryptedText.split("[\\]\\[0123546789,'+=_\\;:{}/<>|)(?!@#$%^&*\\-. \r\n\"]");
         ArrayList<String> DecryptedWordsArray = new ArrayList<String>(Arrays.asList(decryptedTextSaperatedBySpace));
+        DecryptedWordsArray.removeAll(Arrays.asList(""));
         DecryptedWordsArray.removeAll(EnglishWordsSet);
         if ((double)DecryptedWordsArray.size()/decryptedTextSaperatedBySpace.length < minimumNumberOfNonEnglishWords)
             return true;
         return false;
+    }
+
+    public HashMap<Character,Character> GetKeyFromPlainAndCipher(String cipher, String plainText,String IV)
+    {
+        byte[] IVByte= cbc.StringToUtf8(IV);
+        byte[] plaintextByte = cbc.StringToUtf8(plainText);
+        byte[] xor= cbc.xor( plaintextByte,IVByte) ;
+        String ToBeEncrypted=cbc.Uf8ToString(xor);
+        HashMap<Character,Character> partialKey = new HashMap<Character,Character>();
+        for (int i=0;i<ToBeEncrypted.length();i++)
+        {
+            byte a = xor[i];
+            //byte[] byteChar = {(byte) (0xff & i)};
+            String b = cbc.Uf8ToString(new byte[]{a});
+            //if ((xor[i]<(0xff & 123) && xor[i]>(0xff & 97)) || (xor[i]<(0xff & 91) && xor[i]>(0xff & 65)))
+            if ((Character.getType(ToBeEncrypted.charAt(i)) == Character.UPPERCASE_LETTER ||Character.getType(ToBeEncrypted.charAt(i)) == Character.LOWERCASE_LETTER) && ToBeEncrypted.charAt(i) != 'Ҥ')
+            {
+                partialKey.put(ToBeEncrypted.charAt(i),cipher.charAt(i));
+            }
+            /*if (Character.isLetter(ToBeEncrypted.charAt(i)))
+            {
+                partialKey.put(ToBeEncrypted.charAt(i),cipher.charAt(i));
+            }*/
+        }
+        return partialKey;
     }
 }
