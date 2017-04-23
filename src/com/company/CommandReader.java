@@ -12,14 +12,14 @@ enum EncryptionAlgorithm{
 }
 public class CommandReader {
 
-    private String textPath;
-    private String keyPath;
-    private String IVPath;
-    private String outputFilePath;
-    private Action action;
-    private EncryptionAlgorithm EA;
-    private String knownPlaintext;
-    private String knownCiphertext;
+    public String textPath;
+    public String keyPath;
+    public String IVPath;
+    public String outputFilePath;
+    public Action action;
+    public EncryptionAlgorithm EA;
+    public String knownPlaintext;
+    public String knownCiphertext;
 
     public CommandReader(String[] args)
     {

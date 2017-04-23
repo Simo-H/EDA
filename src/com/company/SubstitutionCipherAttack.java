@@ -145,4 +145,24 @@ public class SubstitutionCipherAttack {
         }
         return partialKey;
     }
+    public HashMap<Character,Character> Known_plain_text(byte[] cipher,byte[] nknowCipher, byte[] plainText,byte[] IV,double PercentCheck,double minimumNumberOfNonEnglishWords)
+    {
+        HashMap<Character,Character> KeyFromNownPlainAndCipher =GetKeyFromPlainAndCipher( nknowCipher, plainText,IV);
+
+        byte[] cipherDecryptWithPartialKay= SCED.Decrypt(cipher);
+        ArrayList< HashMap<Character,Character>> KeysFromNownPlainAndCipher=GetKeyReminder(KeyFromNownPlainAndCipher);
+        HashMap<Character,Character> potentialKey;
+        boolean bool=false;
+        int i=0;
+        while ( !bool && i<KeysFromNownPlainAndCipher.size())
+        {
+            potentialKey= KeysFromNownPlainAndCipher.get(i);
+            SubstitutionCipherED SCEDP = new SubstitutionCipherED(potentialKey);
+            String decryptedText= cbc.CBCDecryption(IV,cipherDecryptWithPartialKay,SCEDP);
+            bool=CheckKeyReturnsEnglish(decryptedText,minimumNumberOfNonEnglishWords);
+            i++;
+        }
+
+        return KeysFromNownPlainAndCipher.get(i) ;
+    }
 }

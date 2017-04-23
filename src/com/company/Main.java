@@ -11,7 +11,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception
     {
-
+/*
             ReadWrite RW = new ReadWrite();
             CBCmode CBC= new CBCmode(10);
             byte[] alltext=  RW.ReadTextbyte("C:\\Users\\Stav\\Desktop\\Alice.txt");
@@ -24,7 +24,7 @@ public class Main {
             String en=CBC.CBCDecryption(IV,alltext,Encryption);
             RW.WriteText("C:\\Users\\Stav\\Desktop\\test2.txt",en);
 
-
+*/
             //Cipher text only attack
         /*SubstitutionCipherAttack sbattack=new SubstitutionCipherAttack(CBC);
         HashMap<Character ,Character> ans = sbattack.CipherTextOnlyAttack(alltext,IV,0.1, 8,0.01);*/
@@ -39,5 +39,66 @@ public class Main {
         CBCmode CBC= new CBCmode(8128);
         SubstitutionCipherAttack sbattack=new SubstitutionCipherAttack(CBC);
         HashMap<Character ,Character> partialKey = sbattack.GetKeyFromPlainAndCipher(KnownTextCipher,KnownTextPlain,IV);*/
+        ReadWrite RW= new ReadWrite();
+        CommandReader input=new CommandReader( args);
+        byte[] IV=RW.ReadTextbyte(input.IVPath);
+        //
+        if(input.EA.equals("sub_cbc_10")&&input.action==(Action.Encrypt))
+        {
+            CBCmode cbc=new CBCmode(10);
+            byte[] plainText= RW.ReadTextbyte(input.textPath);
+            SubstitutionCipherED Encryption=new SubstitutionCipherED(RW.ReadKey(input.keyPath));
+            byte[][] CBCEncryption=  cbc.CBCEncryption(IV, plainText, Encryption);
+            RW.WriteEncryptedText(input.outputFilePath,CBCEncryption);
+        }
+        if(input.EA.equals("sub_cbc_10")&&input.action==(Action.Decrypt))
+        {
+            CBCmode cbc=new CBCmode(10);
+            byte[] CipherText= RW.ReadTextbyte(input.textPath);
+            SubstitutionCipherED Encryption=new SubstitutionCipherED(RW.ReadKey(input.keyPath));
+            String CBCEncryption=  cbc.CBCDecryption(IV, CipherText, Encryption);
+            RW.WriteText(input.outputFilePath, CBCEncryption);
+        }
+        if(input.EA.equals("sub_cbc_10")&&input.action==(Action.Attack))
+        {
+
+            CBCmode cbc=new CBCmode(10);
+            SubstitutionCipherAttack sAttack=new SubstitutionCipherAttack(cbc);
+            byte[] CipherText= RW.ReadTextbyte(input.textPath);
+            HashMap<Character,Character> key =sAttack.CipherTextOnlyAttack(CipherText,IV, 0.1,8,0.01) ;
+            SubstitutionCipherED Encryption=new SubstitutionCipherED(RW.ReadKey(input.keyPath));
+            RW.WriteKey(key,input.outputFilePath);
+        }
+        if(input.EA.equals("sub_cbc_52")&&input.action==(Action.Encrypt))
+        {
+            CBCmode cbc=new CBCmode(8128);
+            byte[] plainText= RW.ReadTextbyte(input.textPath);
+            SubstitutionCipherED Encryption=new SubstitutionCipherED(RW.ReadKey(input.keyPath));
+            byte[][] CBCEncryption=  cbc.CBCEncryption(IV, plainText, Encryption);
+            RW.WriteEncryptedText(input.outputFilePath,CBCEncryption);
+        }
+        if(input.EA.equals("sub_cbc_52")&&input.action==(Action.Decrypt))
+        {
+            CBCmode cbc=new CBCmode(8128);
+            byte[] CipherText= RW.ReadTextbyte(input.textPath);
+            SubstitutionCipherED Encryption=new SubstitutionCipherED(RW.ReadKey(input.keyPath));
+            String CBCEncryption=  cbc.CBCDecryption(IV, CipherText, Encryption);
+            RW.WriteText(input.outputFilePath, CBCEncryption);
+        }
+        if(input.EA.equals("sub_cbc_52")&&input.action==(Action.Attack))
+        {
+            CBCmode cbc=new CBCmode(8128);
+            byte[] cipher= RW.ReadTextbyte(input.textPath);
+            byte[] nknowCipher= RW.ReadTextbyte(input.knownCiphertext);
+            byte[] plainText= RW.ReadTextbyte(input.textPath);
+            SubstitutionCipherAttack sAttack=new SubstitutionCipherAttack(cbc);
+            HashMap<Character,Character> key= sAttack.Known_plain_text(cipher, nknowCipher,plainText,IV,0.1,0.01);
+            if(key!= null)
+            {
+                RW.WriteKey(key,input.outputFilePath);
+            }
+        }
+
+
     }
 }
