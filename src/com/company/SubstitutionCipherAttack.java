@@ -1,10 +1,7 @@
 package com.company;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -100,16 +97,18 @@ public class SubstitutionCipherAttack {
     {
         ArrayList<HashMap<Character,Character>> findAllPossibleKeys=findAllPossibleKeys(KeySize);
         byte[] SubCipher= SectionOfCiphertext (textCipher, PercentCheck);
-
+        ArrayList<HashMap<Character,Character>> keys = new ArrayList<>();
+        findAllPossibleKeys.parallelStream().filter(s->CheckKeyReturnsEnglish(cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(s)),minimumNumberOfNonEnglishWords)).findFirst().ifPresent(s->keys.add(s));//.forEach(p->keys.add(p));
         //paralell
-        for (int i=0; i<findAllPossibleKeys.size();i++)
-        {
-            String decryptedText= cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(findAllPossibleKeys.get(i)));
-            if (CheckKeyReturnsEnglish(decryptedText,minimumNumberOfNonEnglishWords))
-            {
-                return findAllPossibleKeys.get(i);
-            }
-        }
+
+//        for (int i=0; i<findAllPossibleKeys.size();i++)
+//        {
+//            String decryptedText= cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(findAllPossibleKeys.get(i)));
+//            if (CheckKeyReturnsEnglish(decryptedText,minimumNumberOfNonEnglishWords))
+//            {
+//                return findAllPossibleKeys.get(i);
+//            }
+//        }
         return null;
     }
     public boolean CheckKeyReturnsEnglish(String decryptedText,double minimumNumberOfNonEnglishWords)
@@ -144,6 +143,25 @@ public class SubstitutionCipherAttack {
             }*/
         }
         return partialKey;
+    }
+
+    public ArrayList<HashMap<Character,Character>> GetKeyReminder(HashMap<Character,Character> partialKey)
+    {
+        String aZKey = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String aZValue = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (int i=0;i<aZKey.length();i++)
+        {
+            if (partialKey.keySet().contains(aZKey.charAt(i)))
+                aZKey = aZKey.replace(Character.toString(aZKey.charAt(i)),"");
+        }
+        for (int i=0;i<aZValue.length();i++)
+        {
+            if (partialKey.keySet().contains(aZValue.charAt(i)))
+                aZValue = aZValue.replace(Character.toString(aZValue.charAt(i)),"");
+        }
+        ArrayList<String> AllPermutaionStrings = new ArrayList<>();
+        perm1(aZValue,AllPermutaionStrings);
+        return AllPossibleKeys(AllPermutaionStrings,aZKey);
     }
     public HashMap<Character,Character> Known_plain_text(byte[] cipher,byte[] nknowCipher, byte[] plainText,byte[] IV,double PercentCheck,double minimumNumberOfNonEnglishWords)
     {
