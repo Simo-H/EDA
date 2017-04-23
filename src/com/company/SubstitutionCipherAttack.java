@@ -163,24 +163,20 @@ public class SubstitutionCipherAttack {
         perm1(aZValue,AllPermutaionStrings);
         return AllPossibleKeys(AllPermutaionStrings,aZKey);
     }
-    public HashMap<Character,Character> Known_plain_text(byte[] cipher,byte[] nknowCipher, byte[] plainText,byte[] IV,double PercentCheck,double minimumNumberOfNonEnglishWords)
-    {
-        HashMap<Character,Character> KeyFromNownPlainAndCipher =GetKeyFromPlainAndCipher( nknowCipher, plainText,IV);
 
+    public HashMap<Character,Character> KnownPlainTextAttack(byte[] cipher,byte[] knownCipher, byte[] plainText,byte[] IV,double PercentCheck,double minimumNumberOfNonEnglishWords)
+    {
+        HashMap<Character,Character> KeyFromNownPlainAndCipher =GetKeyFromPlainAndCipher( knownCipher, plainText,IV);
+
+        SubstitutionCipherED SCED = new SubstitutionCipherED(KeyFromNownPlainAndCipher);
         byte[] cipherDecryptWithPartialKay= SCED.Decrypt(cipher);
         ArrayList< HashMap<Character,Character>> KeysFromNownPlainAndCipher=GetKeyReminder(KeyFromNownPlainAndCipher);
         HashMap<Character,Character> potentialKey;
-        boolean bool=false;
-        int i=0;
-        while ( !bool && i<KeysFromNownPlainAndCipher.size())
-        {
-            potentialKey= KeysFromNownPlainAndCipher.get(i);
-            SubstitutionCipherED SCEDP = new SubstitutionCipherED(potentialKey);
-            String decryptedText= cbc.CBCDecryption(IV,cipherDecryptWithPartialKay,SCEDP);
-            bool=CheckKeyReturnsEnglish(decryptedText,minimumNumberOfNonEnglishWords);
-            i++;
-        }
 
-        return KeysFromNownPlainAndCipher.get(i) ;
+        byte[] SubCipher= SectionOfCiphertext (cipherDecryptWithPartialKay, PercentCheck);
+
+        ArrayList<HashMap<Character,Character>> keys = new ArrayList<>();
+        KeysFromNownPlainAndCipher.parallelStream().filter(s->CheckKeyReturnsEnglish(cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(s)),minimumNumberOfNonEnglishWords)).findFirst().ifPresent(s->keys.add(s));//.forEach(p->keys.add(p));
+        return keys.get(0);
     }
 }
