@@ -109,7 +109,7 @@ public class SubstitutionCipherAttack {
 //                return findAllPossibleKeys.get(i);
 //            }
 //        }
-        return null;
+        return findAllPossibleKeys.get(0);
     }
     public boolean CheckKeyReturnsEnglish(String decryptedText,double minimumNumberOfNonEnglishWords)
     {
