@@ -146,7 +146,7 @@ public class ReadWrite {
 
     }
     /**Write key to text file */
-    public void WriteKey(HashMap<Character,Character> KeyMap,String filePath){
+    public void WriteKey(Map<Character,Character> KeyMap,String filePath){
         String KeyString= KeyMap.toString();
         KeyString= KeyString.substring(1,KeyString.length()-1);
         String KeyToWrite="";

@@ -171,31 +171,32 @@ public class SubstitutionCipherAttack {
         return AllPossibleKeys(AllPermutaionStrings,reminderKey);
     }
 
-    public HashMap<Character,Character> KnownPlainTextAttack(byte[] cipher,byte[] knownCipher, byte[] plainText,byte[] IV,int numberOfChar)
-    {
-        HashMap<Character,Character> KeyFromNownPlainAndCipher =GetKeyFromPlainAndCipher( knownCipher, plainText,IV);
+    public Map<Character,Character> KnownPlainTextAttack(byte[] cipher,byte[] knownCipher, byte[] plainText,byte[] IV,int numberOfChar) {
+        HashMap<Character, Character> KeyFromNownPlainAndCipher = GetKeyFromPlainAndCipher(knownCipher, plainText, IV);
         SubstitutionCipherED SCED = new SubstitutionCipherED(KeyFromNownPlainAndCipher);
-        byte[] cipherDecryptWithPartialKay= SCED.Decrypt(cipher);
-        ArrayList< HashMap<Character,Character>> KeysFromNownPlainAndCipher=GetKeyReminder(KeyFromNownPlainAndCipher);
+        byte[] cipherDecryptWithPartialKay = SCED.Decrypt(cipher);
+        ArrayList<HashMap<Character, Character>> KeysFromNownPlainAndCipher = GetKeyReminder(KeyFromNownPlainAndCipher);
         int best = Integer.MAX_VALUE;
         int bestPosition = 0;
-        byte[] SectionOfCiphertext = SectionOfCiphertext(cipher,numberOfChar);
-        for (int i=0; i<KeysFromNownPlainAndCipher.size();i++)
-        {
-            String decryptedText= cbc.CBCDecryption(IV,SectionOfCiphertext,new SubstitutionCipherED(KeysFromNownPlainAndCipher.get(i)));
+        byte[] SectionOfCiphertext = SectionOfCiphertext(cipher, numberOfChar);
+        for (int i = 0; i < KeysFromNownPlainAndCipher.size(); i++) {
+            String decryptedText = cbc.CBCDecryption(IV, SectionOfCiphertext, new SubstitutionCipherED(KeysFromNownPlainAndCipher.get(i)));
             int nonEnglishWords = CheckKeyReturnsEnglish(decryptedText);
-            if (best>nonEnglishWords)
-            {
+            if (best > nonEnglishWords) {
                 best = nonEnglishWords;
                 bestPosition = i;
             }
         }
-
-        return KeysFromNownPlainAndCipher.get(bestPosition);
+        return joinKeys(KeysFromNownPlainAndCipher.get(bestPosition),KeyFromNownPlainAndCipher);
+    }
         //byte[] SubCipher= SectionOfCiphertext (cipherDecryptWithPartialKay, PercentCheck);
 
         //ArrayList<HashMap<Character,Character>> keys = new ArrayList<>();
         //KeysFromNownPlainAndCipher.parallelStream().filter(s->CheckKeyReturnsEnglish(cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(s)),minimumNumberOfNonEnglishWords)).findFirst().ifPresent(s->keys.add(s));//.forEach(p->keys.add(p));
-
+        public Map<Character,Character> joinKeys(HashMap<Character,Character> keyA,HashMap<Character,Character> keyB )
+        {
+            keyA.putAll(keyB);
+            return new TreeMap<Character, Character>(keyA);
+        }
     }
-}
+
