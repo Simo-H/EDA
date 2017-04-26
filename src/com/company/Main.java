@@ -43,7 +43,7 @@ public class Main {
         CommandReader input=new CommandReader( args);
         byte[] IV=RW.ReadTextbyte(input.IVPath);
         //
-        if(input.EA.equals("sub_cbc_10")&&input.action==(Action.Encrypt))
+        if(input.EA == EncryptionAlgorithm.sub_cbc_10 &&input.action==(Action.Encrypt))
         {
             CBCmode cbc=new CBCmode(10);
             byte[] plainText= RW.ReadTextbyte(input.textPath);
@@ -51,7 +51,7 @@ public class Main {
             byte[][] CBCEncryption=  cbc.CBCEncryption(IV, plainText, Encryption);
             RW.WriteEncryptedText(input.outputFilePath,CBCEncryption);
         }
-        if(input.EA.equals("sub_cbc_10")&&input.action==(Action.Decrypt))
+        if(input.EA== EncryptionAlgorithm.sub_cbc_10 &&input.action==(Action.Decrypt))
         {
             CBCmode cbc=new CBCmode(10);
             byte[] CipherText= RW.ReadTextbyte(input.textPath);
@@ -59,17 +59,16 @@ public class Main {
             String CBCEncryption=  cbc.CBCDecryption(IV, CipherText, Encryption);
             RW.WriteText(input.outputFilePath, CBCEncryption);
         }
-        if(input.EA.equals("sub_cbc_10")&&input.action==(Action.Attack))
+        if(input.EA== EncryptionAlgorithm.sub_cbc_10 &&input.action==(Action.Attack))
         {
 
             CBCmode cbc=new CBCmode(10);
             SubstitutionCipherAttack sAttack=new SubstitutionCipherAttack(cbc);
             byte[] CipherText= RW.ReadTextbyte(input.textPath);
-            HashMap<Character,Character> key =sAttack.CipherTextOnlyAttack(CipherText,IV, 0.1,8,0.01) ;
-            SubstitutionCipherED Encryption=new SubstitutionCipherED(RW.ReadKey(input.keyPath));
+            HashMap<Character,Character> key =sAttack.CipherTextOnlyAttack(CipherText,IV, 0.1,8,0.007) ;
             RW.WriteKey(key,input.outputFilePath);
         }
-        if(input.EA.equals("sub_cbc_52")&&input.action==(Action.Encrypt))
+        if(input.EA == EncryptionAlgorithm.sub_cbc_52 &&input.action==(Action.Encrypt))
         {
             CBCmode cbc=new CBCmode(8128);
             byte[] plainText= RW.ReadTextbyte(input.textPath);
@@ -77,7 +76,7 @@ public class Main {
             byte[][] CBCEncryption=  cbc.CBCEncryption(IV, plainText, Encryption);
             RW.WriteEncryptedText(input.outputFilePath,CBCEncryption);
         }
-        if(input.EA.equals("sub_cbc_52")&&input.action==(Action.Decrypt))
+        if(input.EA == EncryptionAlgorithm.sub_cbc_52 &&input.action==(Action.Decrypt))
         {
             CBCmode cbc=new CBCmode(8128);
             byte[] CipherText= RW.ReadTextbyte(input.textPath);
@@ -85,12 +84,12 @@ public class Main {
             String CBCEncryption=  cbc.CBCDecryption(IV, CipherText, Encryption);
             RW.WriteText(input.outputFilePath, CBCEncryption);
         }
-        if(input.EA.equals("sub_cbc_52")&&input.action==(Action.Attack))
+        if(input.EA == EncryptionAlgorithm.sub_cbc_52 &&input.action==(Action.Attack))
         {
             CBCmode cbc=new CBCmode(8128);
             byte[] cipher= RW.ReadTextbyte(input.textPath);
             byte[] nknowCipher= RW.ReadTextbyte(input.knownCiphertext);
-            byte[] plainText= RW.ReadTextbyte(input.textPath);
+            byte[] plainText= RW.ReadTextbyte(input.knownPlaintext);
             SubstitutionCipherAttack sAttack=new SubstitutionCipherAttack(cbc);
             HashMap<Character,Character> key= sAttack.KnownPlainTextAttack(cipher, nknowCipher,plainText,IV,0.1,0.01);
             if(key!= null)
