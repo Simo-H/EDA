@@ -87,40 +87,45 @@ public class SubstitutionCipherAttack {
         }
         return AllPossibleKeys;
     }
-    private byte[] SectionOfCiphertext (byte[] textCipher, double Percent )
+    private byte[] SectionOfCiphertext (byte[] textCipher, int numberOfChar )
     {
-        int lengthtext= (int)(textCipher.length*Percent) ;
-        return  Arrays.copyOfRange(textCipher,0,lengthtext);
+        //int lengthtext= (int)(textCipher.length*Percent) ;
+        if (textCipher.length < numberOfChar)
+            return  textCipher;
+        return  Arrays.copyOfRange(textCipher,0,numberOfChar);
     }
 
-    public   HashMap<Character,Character> CipherTextOnlyAttack(byte[] textCipher,byte[] IV,double PercentCheck,int KeySize,double minimumNumberOfNonEnglishWords)
+    public   HashMap<Character,Character> CipherTextOnlyAttack(byte[] textCipher,byte[] IV,int numberOfChar,int KeySize,double minimumNumberOfNonEnglishWords)
     {
         ArrayList<HashMap<Character,Character>> findAllPossibleKeys=findAllPossibleKeys(KeySize);
-        byte[] SubCipher= SectionOfCiphertext (textCipher, PercentCheck);
+        byte[] SubCipher= SectionOfCiphertext (textCipher, numberOfChar);
         ArrayList<HashMap<Character,Character>> keys = new ArrayList<>();
-        findAllPossibleKeys.parallelStream().filter(s->CheckKeyReturnsEnglish(cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(s)),minimumNumberOfNonEnglishWords)).findFirst().ifPresent(s->keys.add(s));//.forEach(p->keys.add(p));
+        //findAllPossibleKeys.parallelStream().forEach();
+        //findAllPossibleKeys.parallelStream().filter(s->CheckKeyReturnsEnglish(cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(s)),minimumNumberOfNonEnglishWords)).forEach(p->keys.add(p));//.//findFirst().ifPresent(s->keys.add(s));//.forEach(p->keys.add(p));
         //paralell
+        int best = Integer.MAX_VALUE;
+        int bestPosition = 0;
+        for (int i=0; i<findAllPossibleKeys.size();i++)
+        {
+            String decryptedText= cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(findAllPossibleKeys.get(i)));
+            int nonEnglishWords = CheckKeyReturnsEnglish(decryptedText);
+            if (best>nonEnglishWords)
+            {
+                best = nonEnglishWords;
+                bestPosition = i;
+            }
+        }
 
-//        for (int i=0; i<findAllPossibleKeys.size();i++)
-//        {
-//            String decryptedText= cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(findAllPossibleKeys.get(i)));
-//            if (CheckKeyReturnsEnglish(decryptedText,minimumNumberOfNonEnglishWords))
-//            {
-//                return findAllPossibleKeys.get(i);
-//            }
-//        }
-        return findAllPossibleKeys.get(0);
+        return findAllPossibleKeys.get(bestPosition);
     }
-    public boolean CheckKeyReturnsEnglish(String decryptedText,double minimumNumberOfNonEnglishWords)
+    public int CheckKeyReturnsEnglish(String decryptedText)
     {
         decryptedText = decryptedText.toLowerCase();
         String[] decryptedTextSaperatedBySpace = decryptedText.split("[\\]\\[0123546789,'+=_\\;:{}/<>|)(?!@#$%^&*\\-. \r\n\"]");
         ArrayList<String> DecryptedWordsArray = new ArrayList<String>(Arrays.asList(decryptedTextSaperatedBySpace));
         DecryptedWordsArray.removeAll(Arrays.asList(""));
         DecryptedWordsArray.removeAll(EnglishWordsSet);
-        if ((double)DecryptedWordsArray.size()/decryptedTextSaperatedBySpace.length < minimumNumberOfNonEnglishWords)
-            return true;
-        return false;
+        return DecryptedWordsArray.size();
     }
 
     public HashMap<Character,Character> GetKeyFromPlainAndCipher(byte[] cipher, byte[] plainText,byte[] IV)
@@ -173,10 +178,10 @@ public class SubstitutionCipherAttack {
         ArrayList< HashMap<Character,Character>> KeysFromNownPlainAndCipher=GetKeyReminder(KeyFromNownPlainAndCipher);
         HashMap<Character,Character> potentialKey;
 
-        byte[] SubCipher= SectionOfCiphertext (cipherDecryptWithPartialKay, PercentCheck);
+        //byte[] SubCipher= SectionOfCiphertext (cipherDecryptWithPartialKay, PercentCheck);
 
         ArrayList<HashMap<Character,Character>> keys = new ArrayList<>();
-        KeysFromNownPlainAndCipher.parallelStream().filter(s->CheckKeyReturnsEnglish(cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(s)),minimumNumberOfNonEnglishWords)).findFirst().ifPresent(s->keys.add(s));//.forEach(p->keys.add(p));
+        //KeysFromNownPlainAndCipher.parallelStream().filter(s->CheckKeyReturnsEnglish(cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(s)),minimumNumberOfNonEnglishWords)).findFirst().ifPresent(s->keys.add(s));//.forEach(p->keys.add(p));
         return keys.get(0);
     }
 }

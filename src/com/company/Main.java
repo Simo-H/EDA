@@ -65,7 +65,7 @@ public class Main {
             CBCmode cbc=new CBCmode(10);
             SubstitutionCipherAttack sAttack=new SubstitutionCipherAttack(cbc);
             byte[] CipherText= RW.ReadTextbyte(input.textPath);
-            HashMap<Character,Character> key =sAttack.CipherTextOnlyAttack(CipherText,IV, 0.1,8,0.007) ;
+            HashMap<Character,Character> key =sAttack.CipherTextOnlyAttack(CipherText,IV, 5000,8,0.01) ;
             RW.WriteKey(key,input.outputFilePath);
         }
         if(input.EA == EncryptionAlgorithm.sub_cbc_52 &&input.action==(Action.Encrypt))
