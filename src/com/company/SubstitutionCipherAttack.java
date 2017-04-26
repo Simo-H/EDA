@@ -153,35 +153,49 @@ public class SubstitutionCipherAttack {
     public ArrayList<HashMap<Character,Character>> GetKeyReminder(HashMap<Character,Character> partialKey)
     {
         String aZKey = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String aZValue = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        for (int i=0;i<aZKey.length();i++)
+        //String aZValue = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String reminderKey = "";
+        String reminderValue = "";
+        for (int i=0;i<52;i++)
         {
-            if (partialKey.keySet().contains(aZKey.charAt(i)))
-                aZKey = aZKey.replace(Character.toString(aZKey.charAt(i)),"");
+            if (!partialKey.keySet().contains(aZKey.charAt(i)))
+                reminderKey+=aZKey.charAt(i);
         }
-        for (int i=0;i<aZValue.length();i++)
+        for (int i=0;i<52;i++)
         {
-            if (partialKey.keySet().contains(aZValue.charAt(i)))
-                aZValue = aZValue.replace(Character.toString(aZValue.charAt(i)),"");
+            if (!partialKey.keySet().contains(aZKey.charAt(i)))
+                reminderValue+=aZKey.charAt(i);
         }
         ArrayList<String> AllPermutaionStrings = new ArrayList<>();
-        perm1(aZValue,AllPermutaionStrings);
-        return AllPossibleKeys(AllPermutaionStrings,aZKey);
+        perm1(reminderValue,AllPermutaionStrings);
+        return AllPossibleKeys(AllPermutaionStrings,reminderKey);
     }
 
-    public HashMap<Character,Character> KnownPlainTextAttack(byte[] cipher,byte[] knownCipher, byte[] plainText,byte[] IV,double PercentCheck,double minimumNumberOfNonEnglishWords)
+    public HashMap<Character,Character> KnownPlainTextAttack(byte[] cipher,byte[] knownCipher, byte[] plainText,byte[] IV,int numberOfChar)
     {
         HashMap<Character,Character> KeyFromNownPlainAndCipher =GetKeyFromPlainAndCipher( knownCipher, plainText,IV);
-
         SubstitutionCipherED SCED = new SubstitutionCipherED(KeyFromNownPlainAndCipher);
         byte[] cipherDecryptWithPartialKay= SCED.Decrypt(cipher);
         ArrayList< HashMap<Character,Character>> KeysFromNownPlainAndCipher=GetKeyReminder(KeyFromNownPlainAndCipher);
-        HashMap<Character,Character> potentialKey;
+        int best = Integer.MAX_VALUE;
+        int bestPosition = 0;
+        byte[] SectionOfCiphertext = SectionOfCiphertext(cipher,numberOfChar);
+        for (int i=0; i<KeysFromNownPlainAndCipher.size();i++)
+        {
+            String decryptedText= cbc.CBCDecryption(IV,SectionOfCiphertext,new SubstitutionCipherED(KeysFromNownPlainAndCipher.get(i)));
+            int nonEnglishWords = CheckKeyReturnsEnglish(decryptedText);
+            if (best>nonEnglishWords)
+            {
+                best = nonEnglishWords;
+                bestPosition = i;
+            }
+        }
 
+        return KeysFromNownPlainAndCipher.get(bestPosition);
         //byte[] SubCipher= SectionOfCiphertext (cipherDecryptWithPartialKay, PercentCheck);
 
-        ArrayList<HashMap<Character,Character>> keys = new ArrayList<>();
+        //ArrayList<HashMap<Character,Character>> keys = new ArrayList<>();
         //KeysFromNownPlainAndCipher.parallelStream().filter(s->CheckKeyReturnsEnglish(cbc.CBCDecryption(IV,SubCipher,new SubstitutionCipherED(s)),minimumNumberOfNonEnglishWords)).findFirst().ifPresent(s->keys.add(s));//.forEach(p->keys.add(p));
-        return keys.get(0);
+
     }
 }

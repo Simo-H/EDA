@@ -91,13 +91,11 @@ public class Main {
             byte[] nknowCipher= RW.ReadTextbyte(input.knownCiphertext);
             byte[] plainText= RW.ReadTextbyte(input.knownPlaintext);
             SubstitutionCipherAttack sAttack=new SubstitutionCipherAttack(cbc);
-            HashMap<Character,Character> key= sAttack.KnownPlainTextAttack(cipher, nknowCipher,plainText,IV,0.1,0.01);
+            HashMap<Character,Character> key= sAttack.KnownPlainTextAttack(cipher, nknowCipher,plainText,IV,1000);
             if(key!= null)
             {
                 RW.WriteKey(key,input.outputFilePath);
             }
         }
-
-
     }
 }
