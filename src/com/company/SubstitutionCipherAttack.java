@@ -198,5 +198,31 @@ public class SubstitutionCipherAttack {
             keyA.putAll(keyB);
             return new TreeMap<Character, Character>(keyA);
         }
+
+    public HashMap<Character,Character> GetFinalKey(HashMap<Character,Character> partialKey)
+    {
+        String aZKey = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        //String aZValue = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String reminderKey = "";
+        String reminderValue = "";
+        HashMap<Character,Character> key= new HashMap<Character,Character>();
+        for (int i=0;i<52;i++)
+        {
+            if (!partialKey.keySet().contains(aZKey.charAt(i)))
+                reminderKey+=aZKey.charAt(i);
+        }
+        for (int i=0;i<reminderKey.length();i++)
+        {
+            if (!partialKey.keySet().contains(aZKey.charAt(i)))
+                reminderValue+=aZKey.charAt(i);
+        }
+        for (int i=0;i<reminderKey.length();i++)
+        {
+            key.put(reminderKey.charAt(i),reminderValue.charAt(i));
+        }
+        return  key;
+
     }
+
+}
 

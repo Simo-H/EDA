@@ -94,6 +94,7 @@ public class Main {
             Map<Character,Character> key= sAttack.KnownPlainTextAttack(cipher, nknowCipher,plainText,IV,1000);
             RW.WriteKey(key,input.outputFilePath);
 
+
         }
     }
 }
