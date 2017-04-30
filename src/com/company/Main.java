@@ -57,7 +57,7 @@ public class Main {
             CBCmode cbc=new CBCmode(10);
             byte[] CipherText= RW.ReadTextbyte(input.textPath);
             SubstitutionCipherED Encryption=new SubstitutionCipherED(RW.ReadKey(input.keyPath));
-            String CBCEncryption=  cbc.CBCDecryption(IV, CipherText, Encryption);
+            String CBCEncryption=  cbc.CBCDecryption(IV, CipherText, Encryption,false);
             RW.WriteText(input.outputFilePath, CBCEncryption);
         }
         if(input.EA== EncryptionAlgorithm.sub_cbc_10 &&input.action==(Action.Attack))
@@ -66,7 +66,7 @@ public class Main {
             CBCmode cbc=new CBCmode(10);
             SubstitutionCipherAttack sAttack=new SubstitutionCipherAttack(cbc);
             byte[] CipherText= RW.ReadTextbyte(input.textPath);
-            HashMap<Character,Character> key =sAttack.CipherTextOnlyAttack(CipherText,IV, 5000,8,0.01) ;
+            HashMap<Character,Character> key =sAttack.CipherTextOnlyAttack(CipherText,IV, 5000,8) ;
             RW.WriteKey(key,input.outputFilePath);
         }
         if(input.EA == EncryptionAlgorithm.sub_cbc_52 &&input.action==(Action.Encrypt))
@@ -82,7 +82,7 @@ public class Main {
             CBCmode cbc=new CBCmode(8128);
             byte[] CipherText= RW.ReadTextbyte(input.textPath);
             SubstitutionCipherED Encryption=new SubstitutionCipherED(RW.ReadKey(input.keyPath));
-            String CBCEncryption=  cbc.CBCDecryption(IV, CipherText, Encryption);
+            String CBCEncryption=  cbc.CBCDecryption(IV, CipherText, Encryption,false);
             RW.WriteText(input.outputFilePath, CBCEncryption);
         }
         if(input.EA == EncryptionAlgorithm.sub_cbc_52 &&input.action==(Action.Attack))
@@ -92,10 +92,8 @@ public class Main {
             byte[] nknowCipher= RW.ReadTextbyte(input.knownCiphertext);
             byte[] plainText= RW.ReadTextbyte(input.knownPlaintext);
             SubstitutionCipherAttack sAttack=new SubstitutionCipherAttack(cbc);
-            Map<Character,Character> key= sAttack.KnownPlainTextAttack(cipher, nknowCipher,plainText,IV,1000);
+            Map<Character,Character> key= sAttack.KnownPlainTextAttack(cipher, nknowCipher,plainText,IV);
             RW.WriteKey(key,input.outputFilePath);
-
-
         }
     }
 }

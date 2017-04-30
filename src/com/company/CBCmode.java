@@ -13,12 +13,14 @@ public class CBCmode {
 
     private int BlockSize;
    // private SubstitutionCipherED Encryption;
-
+    public ArrayList<Byte> changedLettersAndSpaces;
+    public String IVforAttack;
 
 
     public CBCmode(int blockSize)
     {
         BlockSize=blockSize;
+        changedLettersAndSpaces = new ArrayList<Byte>();
     }
 
     public  byte[][] Divided(byte[] text)
@@ -74,6 +76,15 @@ public class CBCmode {
              return new String(bytePlanText, StandardCharsets.UTF_8);
     }
 
+    public String Uf8ToString(Byte[] bytePlanText)
+    {
+        int j = 0;
+        byte[] bytes = new byte[bytePlanText.length];
+        for(Byte b: bytePlanText)
+            bytes[j++] = b.byteValue();
+        return new String(bytes, StandardCharsets.UTF_8);
+    }
+
     public byte[] xor(byte[] plaintextByte, byte[] IV)
     {
         byte[] postXorArray = new byte[BlockSize];
@@ -101,24 +112,57 @@ public class CBCmode {
         return cipherTextByte;
     }
 
-    public String CBCDecryption(byte[] IV,byte[] cipherText,SubstitutionCipherED Encryption)
+    public String CBCDecryption(byte[] IV,byte[] cipherText,SubstitutionCipherED Encryption,boolean knownPlainTextAttack)
     {
         byte[][] cipherDivided=Divided(cipherText);
         byte[] xor;
+        IVforAttack = "";
         String[] plaintext=new String[cipherDivided.length];
         for (int i=0;i<cipherDivided.length-1;i++)
         {
-            byte[] DecryptedCipher = Encryption.Decrypt(cipherDivided[i]);
+            byte[] DecryptedCipher = Encryption.Decrypt(cipherDivided[i],knownPlainTextAttack);
+            byte[] changedLetters = Encryption.changedLettersAndSpaces;
             xor = xor(DecryptedCipher,IV);
+            //
+            byte[] changedLettersAndSpaces = replaceSpaces(xor,changedLetters,knownPlainTextAttack);
+            for (int j = 0; knownPlainTextAttack && j <  changedLettersAndSpaces.length; j++)
+            {
+                this.changedLettersAndSpaces.add(changedLettersAndSpaces[j]);
+                switch (changedLettersAndSpaces[j])
+                {
+                    case 0: IVforAttack+=IV[j]+".";
+                    break;
+                    case 1: IVforAttack+=IV[j]+".";
+                    break;
+                    case 2: IVforAttack+=",";
+                    break;
+                }
+            }
+            //
             plaintext[i]=Uf8ToString(xor);
             IV=cipherDivided[i];
         }
-        byte[] DecryptedCipher = Encryption.Decrypt(cipherDivided[cipherDivided.length-1]);
+        byte[] DecryptedCipher = Encryption.Decrypt(cipherDivided[cipherDivided.length-1],knownPlainTextAttack);
+        byte[] changedLetters = Encryption.changedLettersAndSpaces;
         xor = xor(DecryptedCipher,IV);
+        byte[] changedLettersAndSpaces = replaceSpaces(xor,changedLetters,knownPlainTextAttack);
         int countZero=0;
         for ( int i=BlockSize-1;i>0 && xor[i]==0 ;i--  )
         {
             countZero++;
+        }
+        for (int j = 0;knownPlainTextAttack &&  j < changedLettersAndSpaces.length - countZero ; j++)
+        {
+            this.changedLettersAndSpaces.add(changedLettersAndSpaces[j]);
+            switch (changedLettersAndSpaces[j])
+            {
+                case 0: IVforAttack+=IV[j]+".";
+                    break;
+                case 1: IVforAttack+=IV[j]+".";
+                    break;
+                case 2: IVforAttack+=",";
+                    break;
+            }
         }
         byte[] dest=new byte[xor.length-countZero];
         System.arraycopy( xor, 0, dest, 0, xor.length-countZero);
@@ -126,5 +170,15 @@ public class CBCmode {
         plaintext[cipherDivided.length-1]=Uf8ToString(dest);
 
         return String.join("", plaintext);
+    }
+
+    public byte[] replaceSpaces(byte[] xoredText,byte[] changedLetters,boolean knownPlainTextAttack)
+    {
+        for (int i=0;i<xoredText.length && knownPlainTextAttack;i++)
+        {
+            if (!((xoredText[i]<(0xff & 123) && xoredText[i]>(0xff & 96)) || (xoredText[i]<(0xff & 91) && xoredText[i]>(0xff & 64))))
+                changedLetters[i] = 2;
+        }
+        return changedLetters;
     }
 }

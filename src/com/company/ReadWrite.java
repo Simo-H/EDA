@@ -41,7 +41,8 @@ public class ReadWrite {
             reader.close();
 
         } catch (IOException e) {
-            System.out.print("Reading text fail..");
+            System.out.print("Invalid arguments. Terminating..");
+            System.exit(1);
             //e.printStackTrace();
 
         } finally {
@@ -52,7 +53,8 @@ public class ReadWrite {
                 }
                 catch (IOException ex)
                 {
-                    System.out.print("Writing to text fail..");
+                    System.out.print("Invalid arguments. Terminating..");
+                    System.exit(1);
 
                 }
             }
@@ -76,7 +78,8 @@ public class ReadWrite {
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            System.out.print("Invalid arguments. Terminating..");
+            System.exit(1);
         }
     }
     public void WriteText(String filePathDestination, String text){
@@ -94,8 +97,8 @@ public class ReadWrite {
             bw.write(text);
 
         } catch (IOException e) {
-            System.out.print("Writing to text fail..");
-            // e.printStackTrace();
+            System.out.print("Invalid arguments. Terminating..");
+            System.exit(1);
 
         } finally {
 
@@ -108,8 +111,8 @@ public class ReadWrite {
                     fw.close();
 
             } catch (IOException ex) {
-                System.out.print("Writing to text fail..");
-                // ex.printStackTrace();
+                System.out.print("Invalid arguments. Terminating..");
+                System.exit(1);
             }
         }
     }
@@ -122,7 +125,8 @@ public class ReadWrite {
             return  data;
         }
         catch (IOException e) {
-            e.printStackTrace();
+            System.out.print("Invalid arguments. Terminating..");
+            System.exit(1);
         }
         return  null;
     }
@@ -151,10 +155,10 @@ public class ReadWrite {
         KeyString= KeyString.substring(1,KeyString.length()-1);
         String KeyToWrite="";
        // Integer sizeMap= KeyMap.size();
-        for (int i=0;i<KeyString.length()-3;i++){
+        for (int i=0;i<KeyString.length();i++){
             KeyToWrite=KeyToWrite+KeyString.charAt(i)+" "+KeyString.charAt(i+2);
             i=i+4;
-            if (i!=KeyString.length()-4 ){
+            if (i!=KeyString.length()-3 ){
                KeyToWrite+="\r\n";
              }
         }

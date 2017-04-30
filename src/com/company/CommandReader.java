@@ -21,148 +21,74 @@ public class CommandReader {
     public String knownPlaintext;
     public String knownCiphertext;
 
-    public CommandReader(String[] args)
-    {
+    public CommandReader(String[] args) {
+        for (int i = 0; i < args.length; i = i + 2) {
+            switch (args[i]) {
+                case "-a": {
+                    switch (args[i + 1]) {
+                        case "sub_cbc_10":
+                            EA = EncryptionAlgorithm.sub_cbc_10;
+                            break;
+                        case "sub_cbc_52":
+                            EA = EncryptionAlgorithm.sub_cbc_52;
+                            break;
 
-        if(args[0].equals("-a"))
-        {
-            switch (args[1])
-            {
-                case "sub_cbc_10": EA = EncryptionAlgorithm.sub_cbc_10;
+                        default:
+                            System.out.print("Invalid arguments. Terminating..");
+                            System.exit(1);
+                            break;
+                    }
                     break;
-                case "sub_cbc_52": EA = EncryptionAlgorithm.sub_cbc_52;
+                }
+                case "-c": {
+                    switch (args[i + 1]) {
+                        case "encryption":
+                            action = Action.Encrypt;
+                            break;
+                        case "decryption":
+                            action = Action.Decrypt;
+                            break;
+                        case "attack":
+                            action = Action.Attack;
+                            break;
+                        default:
+                            System.out.print("Invalid arguments. Terminating..");
+                            System.exit(1);
+                            break;
+                    }
                     break;
-
-                default:
-                    System.out.print("Invalid arguments. Terminating..");
-                    System.exit(1);
+                }
+                case "-t": {
+                    textPath = args[i + 1];
                     break;
-            }
-        }
-        else {
-            System.out.print("Invalid arguments. Terminating..");
-            System.exit(1);
-        }
-        if(args[2].equals("-c"))
-        {
-            switch (args[3])
-            {
-                case "encryption": action = Action.Encrypt;
+                }
+                case "-v": {
+                    IVPath = args[i + 1];
                     break;
-                case "decryption": action = Action.Decrypt;
+                }
+                case "-o": {
+                    outputFilePath = args[i + 1];
                     break;
-                case "attack": action = Action.Attack;
+                }
+                case "-kp": {
+                    knownPlaintext = args[i + 1];
                     break;
-                default:
-                    System.out.print("Invalid arguments. Terminating..");
-                    System.exit(1);
+                }
+                case "-kc": {
+                    knownCiphertext = args[i + 1];
                     break;
-            }
-        }
-        else
-        {
-            System.out.print("Invalid arguments. Terminating..");
-            System.exit(1);
-        }
-        if(args[4].equals("-t"))
-            textPath = args[5];
-        else
-        {
-            System.out.print("Invalid arguments. Terminating..");
-            System.exit(1);
-        }
-        if (action == Action.Attack)
-        {
-            if (EA == EncryptionAlgorithm.sub_cbc_10)
-            {
-                if(args.length != 10)
-                {
-                    System.out.print("Number of passed arguments is invalid. Terminating..");
-                    System.exit(1);
                 }
-                if(args[6].equals("-v"))
-                    IVPath = args[7];
-                else
-                {
+                case "-k": {
+                    keyPath = args[i + 1];
+                    break;
+                }
+                default: {
                     System.out.print("Invalid arguments. Terminating..");
                     System.exit(1);
                 }
-                if(args[8].equals("-o"))
-                    outputFilePath = args[9];
-                else
-                {
-                    System.out.print("Invalid arguments. Terminating..");
-                    System.exit(1);
-                }
-            }
-            if (EA == EncryptionAlgorithm.sub_cbc_52)
-            {
-                if(args.length != 14)
-                {
-                    System.out.print("Number of passed arguments is invalid. Terminating..");
-                    System.exit(1);
-                }
-                if(args[6].equals("-kp"))
-                    knownPlaintext = args[7];
-                else
-                {
-                    System.out.print("Invalid arguments. Terminating..");
-                    System.exit(1);
-                }
-                if(args[8].equals("-kc"))
-                    knownCiphertext = args[9];
-                else
-                {
-                    System.out.print("Invalid arguments. Terminating..");
-                    System.exit(1);
-                }
-                if(args[10].equals("-v"))
-                    IVPath = args[11];
-                else
-                {
-                    System.out.print("Invalid arguments. Terminating..");
-                    System.exit(1);
-                }
-                if(args[12].equals("-o"))
-                    outputFilePath = args[13];
-                else
-                {
-                    System.out.print("Invalid arguments. Terminating..");
-                    System.exit(1);
-                }
-            }
-        }
-        else
-        {
-            if(args.length != 12)
-            {
-                System.out.print("Number of passed arguments is invalid. Terminating..");
-                System.exit(1);
-            }
-            if(args[6].equals("-k"))
-                keyPath = args[7];
-            else
-            {
-                System.out.print("Invalid arguments. Terminating..");
-                System.exit(1);
-            }
-            if(args[8].equals("-v"))
-                IVPath = args[9];
-            else
-            {
-                System.out.print("Invalid arguments. Terminating..");
-                System.exit(1);
-            }
-            if(args[10].equals("-o"))
-                outputFilePath = args[11];
-            else
-            {
-                System.out.print("Invalid arguments. Terminating..");
-                System.exit(1);
             }
 
         }
-
     }
 
 }
