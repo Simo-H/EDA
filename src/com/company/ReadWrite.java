@@ -64,7 +64,9 @@ public class ReadWrite {
     /**Write encrypted or unencrypted text*/
     public void WriteEncryptedText(String filePathDestination,byte[][] text)
     {
+
         File temp = new File(filePathDestination);
+        temp.getParentFile().mkdirs();
         if (temp.exists())
         {
             temp.delete();
@@ -84,6 +86,7 @@ public class ReadWrite {
     }
     public void WriteText(String filePathDestination, String text){
         File temp = new File(filePathDestination);
+        temp.getParentFile().mkdirs();
         if (temp.exists())
         {
             temp.delete();
