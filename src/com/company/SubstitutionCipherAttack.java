@@ -253,9 +253,9 @@ public class SubstitutionCipherAttack {
             if (!partialKey.keySet().contains(aZKey.charAt(i)))
                 reminderKey+=aZKey.charAt(i);
         }
-        for (int i=0;i<reminderKey.length();i++)
+        for (int i=0;i<52;i++)
         {
-            if (!partialKey.keySet().contains(aZKey.charAt(i)))
+            if (!partialKey.values().contains(aZKey.charAt(i)))
                 reminderValue+=aZKey.charAt(i);
         }
         for (int i=0;i<reminderKey.length();i++)
